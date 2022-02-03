@@ -15,7 +15,6 @@ router.get('/contacts', async (req, res) => {
 router.get('/contacts/:id', async (req, res) => {
     const {id} = req.params;
     let contact = await contactsControllers.getContact(id);
-    console.log(contact);
     res.send(contact);
 });
 

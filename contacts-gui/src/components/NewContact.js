@@ -6,8 +6,8 @@ import axios from 'axios'
 
 function NewContact(){
     const navigate  = useNavigate();
-    const [contact, setContact]= useState({})
     const [newContact, setNewContact]= useState({name:"", phone:"", title:"", img:""})
+    const [disable, setDisable]= useState(false)
     let { id } = useParams();
     const location = useLocation();
     
@@ -24,7 +24,13 @@ function NewContact(){
 
         axios.get('http://localhost:8000/api/contacts/' + id).then(res => {
             setNewContact(res.data)
+            if(!res.data){
+                setDisable(true)
+                document.getElementById('lbltipAddedComment').innerHTML = "The selected contact does not exist"
+                document.getElementById('lbltipAddedComment').style.color = "red";
+            }
         }).catch((error) => {
+            alert('error')
             return Promise.reject(error);
         });
     }
@@ -79,10 +85,25 @@ function NewContact(){
         if(contactName.length > 30){
             document.getElementById('lbltipAddedComment').innerHTML = "NAME cannot be longer than 30 characters"
             document.getElementById('lbltipAddedComment').style.color = "red";
-            setNewContact({...newContact,name:""})
         }
         else{
             setNewContact({...newContact,name:contactName})
+        }
+    }
+    
+    function setPhone(contactPhone){
+        // ^(?=.*(?:(?:\d[ -]?){1,12}))\d(?:[0-9 -]*\d)?$
+        // var phoneno = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+        let phoneno = /^(?=.*[0-9])[- +()0-9]+$/
+        if(!contactPhone)setNewContact({...newContact,phone:contactPhone})
+        else{
+            if (!phoneno.test(contactPhone)) {
+                document.getElementById('lbltipAddedComment').innerHTML = "Non-standard character"
+                document.getElementById('lbltipAddedComment').style.color = "red";
+            }
+            else{
+                setNewContact({...newContact,phone:contactPhone})
+            }
         }
     }
 
@@ -95,7 +116,7 @@ function NewContact(){
             <div className="new-contact-container">
                 <div className="new-contact-avatar">
                         <img src={newContact.img}/>
-                        <button onClick={randomContactImage}><i className="fa fa-refresh" aria-hidden="true"></i></button>
+                        <button disabled={disable} onClick={randomContactImage}><i className="fa fa-refresh" aria-hidden="true"></i></button>
                 </div>
                 <div className="new-contact-inputs">
                     <div className="new-contact-input">
@@ -104,7 +125,7 @@ function NewContact(){
                     </div>
                     <div className="new-contact-input">
                         <label>Phone</label>
-                        <input value={newContact.phone} onChange={e => setNewContact({...newContact,phone:e.target.value})}/>
+                        <input value={newContact.phone} onChange={e => setPhone(e.target.value)}/>
                     </div>
                     <div className="new-contact-input">
                         <label>Title</label>
@@ -115,7 +136,7 @@ function NewContact(){
                     <label id="lbltipAddedComment"></label>
                 </div>
                 <div className="new-contact-buttons">
-                    <button className="button-ok" onClick={addContact}>Save</button>
+                    <button disabled={disable} className="button-ok" onClick={addContact}>Save</button>
                     <button className="button-cancel" onClick={cancel}>Cancel</button>
                 </div>
             </div>

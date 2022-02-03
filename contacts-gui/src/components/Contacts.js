@@ -1,4 +1,5 @@
 import React ,{useState, useEffect} from "react";
+import { useNavigate, useLocation  } from 'react-router-dom';
 import './contact.css';
 import Search from './Search'
 import OneContact from './OneContact'
@@ -10,8 +11,13 @@ function Contacts(){
 
     const [contacts, setContacts]= useState([])
     const [serchValue, setSerchValue]= useState()
+    const navigate  = useNavigate();
+    const location = useLocation();
 
     useEffect(()=>{
+        // if(location.pathname === '/'){
+            navigate('/contacts')
+        // }
         getContacts()
     },[])
 

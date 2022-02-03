@@ -11,7 +11,8 @@ let contactsList = [
 
 const addcontact = async(object) => {
 
-    contactsList.push({ "id": contactsList.length + 1, "img": object.img, "name": object.name, "phone": object.phone, "title": object.title });
+    var id = Math.max.apply(Math, contactsList.map(function(contact) { return contact.id; }))
+    contactsList.push({ "id": id + 1, "img": object.img, "name": object.name, "phone": object.phone, "title": object.title });
     return contactsList;
 }
 const getAllcontacts = async () => {
